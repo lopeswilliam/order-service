@@ -1,0 +1,17 @@
+br\com\cadastro\models\EnderecoRequest.class
+br\com\cadastro\repositories\ClienteRepository.class
+br\com\cadastro\repositories\EnderecoRepository.class
+br\com\cadastro\BatchConfiguration.class
+br\com\cadastro\controller\OrderController.class
+br\com\cadastro\entity\Deposito.class
+br\com\cadastro\init.class
+br\com\cadastro\repositories\DepositoRepository.class
+br\com\cadastro\repositories\ProdutoRepository.class
+br\com\cadastro\models\OrderRequest.class
+br\com\cadastro\models\ProdutoRequest.class
+br\com\cadastro\services\OrderService.class
+br\com\cadastro\entity\Endereco.class
+br\com\cadastro\repositories\OrderRepository.class
+br\com\cadastro\entity\Produto.class
+br\com\cadastro\entity\Cliente.class
+br\com\cadastro\entity\OrderPedido.class
