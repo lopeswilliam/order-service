@@ -48,6 +48,12 @@ public class Endereco  implements Serializable {
 	
 	@Column(nullable = false)
 	private String estado;
+	
+	@Column(nullable = false)
+	private Long fornecedorid;
+	
+	@Column(nullable = false)
+	private Long depositoid;
 
 	public Long getId() {
 		return id;
@@ -119,6 +125,22 @@ public class Endereco  implements Serializable {
 
 	public void setCep(String cep) {
 		this.cep = cep;
+	}
+
+	public Long getFornecedorid() {
+		return fornecedorid;
+	}
+
+	public void setFornecedorid(Long fornecedorid) {
+		this.fornecedorid = fornecedorid;
+	}
+
+	public Long getDepositoid() {
+		return depositoid;
+	}
+
+	public void setDepositoid(Long depositoid) {
+		this.depositoid = depositoid;
 	}
 
 	

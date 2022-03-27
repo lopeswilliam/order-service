@@ -15,14 +15,16 @@ public class OrderRequest implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private String id;
+	private Long id;
+	
+	private Long numeroPedido;
 	
 	private String codigoproduto;
 
 	private String datapedido;
 
 	private String cpf;
-
+	
 	private Cliente cliente;
 
 	private Endereco endereco;
@@ -31,12 +33,14 @@ public class OrderRequest implements Serializable {
 	
 	private Deposito deposito;
 
-	public String getId() {
-		return id;
+
+
+	public Long getNumeroPedido() {
+		return numeroPedido;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setNumeroPedido(Long numeroPedido) {
+		this.numeroPedido = numeroPedido;
 	}
 
 	public String getCodigoproduto() {
@@ -93,6 +97,14 @@ public class OrderRequest implements Serializable {
 
 	public void setDeposito(Deposito deposito) {
 		this.deposito = deposito;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	

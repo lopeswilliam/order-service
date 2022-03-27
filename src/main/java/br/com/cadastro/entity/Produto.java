@@ -25,7 +25,7 @@ public class Produto implements Serializable {
 	private Long id;
 
 	@Column(nullable = false)
-	private Integer codigo;
+	private Long codigo;
 	
 	@Column(nullable = false)
 	private String produtoNome;
@@ -94,11 +94,11 @@ public class Produto implements Serializable {
 		this.validade = validade;
 	}
 
-	public Integer getCodigo() {
+	public Long getCodigo() {
 		return codigo;
 	}
 
-	public void setCodigo(Integer codigo) {
+	public void setCodigo(Long codigo) {
 		this.codigo = codigo;
 	}
 

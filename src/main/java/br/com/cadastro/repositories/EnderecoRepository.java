@@ -15,5 +15,6 @@ public interface EnderecoRepository extends JpaRepository<Endereco, Long>{
 	
 	Endereco findByClienteId(Long clienteId);
 	
+	Endereco findByDepositoid(Long depositoid);
 	
 }

@@ -1,5 +1,8 @@
 package br.com.cadastro.services;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,7 +63,7 @@ public class OrderService {
 		logger.info("Iniciando a chamada da Inclusao de Produto");
 
 		OrderPedido orderPedido = new OrderPedido();
-		orderPedido = addPedido(prodRequest, orderPedido);
+		orderPedido = addPedidoInclusao(prodRequest, orderPedido);
 		try {
 			orderPedido = orderRepository.save(orderPedido);
 		} catch (Exception e) {
@@ -82,6 +85,7 @@ public class OrderService {
 	 */
 	public ResponseEntity<OrderRequest> consultar(String order) {
 		logger.info("Iniciando a chamada da Consulta de OrderService");
+
 		OrderRequest orderRequest = new OrderRequest();
 		Endereco endereco = new Endereco();
 
@@ -92,8 +96,8 @@ public class OrderService {
 			Optional<OrderPedido> findById = this.orderRepository.findById(id);
 			if(findById.isPresent()) {
 
-				orderRequest.setId(findById.get().getId().toString() );
-				orderRequest.setCodigoproduto(findById.get().getCodigoproduto() );
+				orderRequest.setNumeroPedido(id);
+				orderRequest.setCodigoproduto(findById.get().getCodigoproduto().toString() );
 				orderRequest.setCpf(findById.get().getCpf());
 				orderRequest.setDatapedido(findById.get().getDatapedido());
 
@@ -105,32 +109,30 @@ public class OrderService {
 					orderRequest.setEndereco(endereco);
 					orderRequest.setCliente(cli);
 
-					Integer codigoproduto = Integer.valueOf(findById.get().getCodigoproduto());
-					List<Produto> findByCodigo = produtoRepository.findByCodigo(codigoproduto);
-					for (Produto prod : findByCodigo) {
-						orderRequest.setProduto(prod);
+					Long idProd = Long.valueOf(findById.get().getCodigoproduto());
+					Optional<Produto> findByIdProduto = produtoRepository.findById(idProd);
 
-						Optional<Deposito> findByIdDeposito = Optional.ofNullable(new Deposito());
-						findByIdDeposito = depositoRepository.findById(Long.valueOf(prod.getDepositoid()));
+					if(findByIdProduto.isPresent()) {
 
+						orderRequest.setProduto(findByIdProduto.get());
+
+						Optional<Deposito> findByIdDeposito = depositoRepository.findById(Long.valueOf(findByIdProduto.get().getDepositoid()));
 						if(findByIdDeposito.isPresent()) {
 
-							Long id2 = findByIdDeposito.get().getId();
+							Long depositoid = findByIdDeposito.get().getId();
+							orderRequest.setDeposito(findByIdDeposito.get());
 
 							Endereco enderecoDeposito = new Endereco();
-							enderecoDeposito.setClienteId(id2);
-							enderecoDeposito = enderecoRepository.findByClienteId(enderecoDeposito.getClienteId());
+							enderecoDeposito = enderecoRepository.findByDepositoid(depositoid);
 
 							Deposito deposito = new Deposito();
 							deposito.setEndereco(enderecoDeposito);
-
-							orderRequest.setDeposito(deposito);
-
+							orderRequest.getDeposito().setEndereco(deposito.getEndereco());
 						}
 
-					}
+						return ResponseEntity.ok().body(orderRequest);
 
-					return ResponseEntity.ok().body(orderRequest);
+					}
 
 				}
 			}
@@ -156,12 +158,28 @@ public class OrderService {
 			order.setId(Long.valueOf(prodRequest.getId()));;
 		}
 
+		if(prodRequest.getNumeroPedido() != null) {
+			order.setId(Long.valueOf(prodRequest.getNumeroPedido()));;
+		}
+
 		order.setCodigoproduto(prodRequest.getCodigoproduto());;
-		order.setDatapedido(prodRequest.getDatapedido());;
+		order.setDatapedido(this.formatador(prodRequest) );
 		order.setCpf(prodRequest.getCpf());;
 		return order;
 	}
 
+	/**
+	 * @param prodRequest
+	 * @param order
+	 * @return
+	 */
+	private OrderPedido addPedidoInclusao(OrderRequest prodRequest, OrderPedido order) {
+
+		order.setCodigoproduto(prodRequest.getCodigoproduto());;
+		order.setDatapedido(this.formatador(prodRequest) );
+		order.setCpf(prodRequest.getCpf());;
+		return order;
+	}
 
 	private ResponseEntity<OrderRequest> callServiceDeposito(OrderRequest prodReques){
 		logger.info("Inicio da chamada ao servico de Orquestracao de Deposito-java");
@@ -217,22 +235,43 @@ public class OrderService {
 		logger.info("Iniciando a chamada da atualizar de Produto");
 
 		OrderPedido orderPedido = new OrderPedido();
-		orderPedido = addPedido(prodRequest, orderPedido);
-		try {
-			orderPedido = orderRepository.saveAndFlush(orderPedido);
-		} catch (Exception e) {
-			logger.error("Ocorreu um erro na persistencia de Dados");
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(orderPedido);
-		}
+		Optional<OrderPedido> findById = orderRepository.findById(prodRequest.getId());
 
-		if(orderPedido != null) {
-			return ResponseEntity.ok().body(orderPedido);
+		if(findById.isPresent()) {
+			orderPedido = findById.get();
+			orderPedido = addPedido(prodRequest, orderPedido);
+			try {
+				orderPedido = orderRepository.saveAndFlush(orderPedido);
+			} catch (Exception e) {
+				logger.error("Ocorreu um erro na persistencia de Dados");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(orderPedido);
+			}
+
+			if(orderPedido != null) {
+				return ResponseEntity.ok().body(orderPedido);
+			}
 		}
 
 		return ResponseEntity.notFound().build();
 
 	}
 
+	public String formatador(OrderRequest prodRequest) {
 
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+		Date date = null;
+		try {
+			String substring = prodRequest.getDatapedido();
+			date = dt.parse(substring);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		SimpleDateFormat dt1 = new SimpleDateFormat("dd/MM/yyyy");
+		String data = dt1.format(date);
+
+		return data;
+
+	}
 
 }

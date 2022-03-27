@@ -69,6 +69,6 @@ public class OrderController {
 	@PutMapping(path = "/atualizar" , produces = {"application/json"})
 	public ResponseEntity<OrderPedido> atualizar(@RequestBody OrderRequest depositoRequest) {
 		logger.info("Iniciando a Inclusao do OrderService");
-		return orderService.inclusao(depositoRequest );
+		return orderService.atualizar(depositoRequest );
 	}
 }
