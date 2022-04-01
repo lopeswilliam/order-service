@@ -34,7 +34,7 @@ public class OrderController {
 	 * @return
 	 */
 	@PostMapping(path = "/incluir" , produces = {"application/json"})
-	public ResponseEntity<OrderPedido> inclusao(@RequestBody OrderRequest depositoRequest, @RequestParam("token") String token) {
+	public ResponseEntity<OrderPedido> inclusao(@RequestBody OrderRequest depositoRequest, @RequestHeader("authorization") String authorization) {
 		logger.info("Iniciando a Inclusao do OrderService");
 		return orderService.inclusao(depositoRequest );
 	}
@@ -45,7 +45,7 @@ public class OrderController {
 	 * @return
 	 */
 	@GetMapping(path = "/consultar" , produces = {"application/json"})
-	public ResponseEntity<OrderRequest> consulta(@RequestParam("order") String order, @RequestParam("token") String token) {
+	public ResponseEntity<OrderRequest> consulta(@RequestParam("order") String order, @RequestHeader("authorization") String authorization) {
 		logger.info("Iniciando a consulta do OrderService");
 		return orderService.consultar(order);
 	}
@@ -56,7 +56,7 @@ public class OrderController {
 	 * @return
 	 */
 	@GetMapping(path = "/consultarordens" , produces = {"application/json"})
-	public ResponseEntity<List<OrderPedido>> consultaOrdens(@RequestParam("token") String token) {
+	public ResponseEntity<List<OrderPedido>> consultaOrdens(@RequestHeader("authorization") String authorization) {
 		logger.info("Iniciando a consulta do OrderService");
 		return orderService.consultarOrdens();
 	}
@@ -67,7 +67,7 @@ public class OrderController {
 	 * @return
 	 */
 	@PutMapping(path = "/atualizar" , produces = {"application/json"})
-	public ResponseEntity<OrderPedido> atualizar(@RequestBody OrderRequest depositoRequest, @RequestParam("token") String token) {
+	public ResponseEntity<OrderPedido> atualizar(@RequestBody OrderRequest depositoRequest, @RequestHeader("authorization") String authorization) {
 		logger.info("Iniciando a Inclusao do OrderService");
 		return orderService.atualizar(depositoRequest );
 	}
